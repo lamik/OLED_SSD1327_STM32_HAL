@@ -35,7 +35,7 @@
 // Resolution
 //
 #define SSD1327_LCDWIDTH                  128
-#define SSD1327_LCDHEIGHT                 98
+#define SSD1327_LCDHEIGHT                 96
 
 /*
  * 		Please set what functionality you want to use.
