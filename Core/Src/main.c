@@ -92,6 +92,8 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   SSD1327_I2cInit(&hi2c1);
+  SSD1327_Clear(BLACK);
+  SSD1327_Display();
   /* USER CODE END 2 */
 
   /* Infinite loop */

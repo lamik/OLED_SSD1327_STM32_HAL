@@ -20,7 +20,8 @@ I2C_HandleTypeDef *ssd1337_i2c;
 #ifdef SSD1327_SPI_CONTROL
 SPI_HandleTypeDef *ssd1337_spi;
 #endif
-static uint8_t buffer[SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8];
+#define SSD1327_BUFFERSIZE	(SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 2)
+static uint8_t buffer[SSD1327_BUFFERSIZE];
 
 void SSD1327_Command(uint8_t com)
 {
@@ -138,40 +139,49 @@ void SSD1327_Init(void)
 {
 	SSD1327_Command(SSD1327_DISPLAYOFF);  // Display Off
 
-//	SSD1327_Command(0x00);
-//	SSD1327_Command(0x10);
-//	SSD1327_Command(0x40);
-//	SSD1327_Command(0x20);  // Set addressing mode
-//	SSD1327_Command(0x00);  // Horizontal Addressing Mode
+	SSD1327_Command(SSD1327_SETMULTIPLEX);
+	SSD1327_Command(0x5F);
 
-	SSD1327_SetContrast(0xFF);
+	SSD1327_Command(SSD1327_SETDISPLAYSTARTLINE);
+	SSD1327_Command(0x00);
 
-//	SSD1327_RotateDisplay(1);
+	SSD1327_Command(SSD1327_SETDISPLAYOFFSET);
+	SSD1327_Command(0x20);
+
+	SSD1327_Command(SSD1327_SEGREMAP);
+	SSD1327_Command(0x51);
+
+	SSD1327_SetContrast(0x7F);
+
+	SSD1327_Command(SSD1327_SETPHASELENGTH);
+	SSD1327_Command(0x22);
+
+	SSD1327_Command(SSD1327_SETFRONTCLOCKDIVIDER_OSCILLATORFREQUENCY);
+	SSD1327_Command(0x50);
+
+	SSD1327_Command(SSD1327_SELECTDEFAULTLINEARGRAYSCALETABLE);
+
+	SSD1327_Command(SSD1327_SETPRECHARGEVOLTAGE);
+	SSD1327_Command(0x10);
+
+	SSD1327_Command(SSD1327_SETSETVCOMVOLTAGE);
+	SSD1327_Command(0x05);
+
+	SSD1327_Command(SSD1327_SETSECONDPRECHARGEPERTIOD);
+	SSD1327_Command(0x0a);
+
+	SSD1327_Command(SSD1327_FUNCTIONSELECTIONB);
+	SSD1327_Command(0x62);
+
+	SSD1327_Command(SSD1327_SETCOLUMNADDRESS);
+	SSD1327_Command(0x00);
+	SSD1327_Command(0x3F);
+
+	SSD1327_Command(SSD1327_SETROWADDRESS);
+	SSD1327_Command(0x00);
+	SSD1327_Command(0x5F);
 
 	SSD1327_Command(SSD1327_NORMALDISPLAY);  // Set Normal Display
-
-	SSD1327_Command(SSD1327_SETMULTIPLEX);  // Select Multiplex Ratio
-	SSD1327_Command(0x3F);  // Default => 0x3F (1/64 Duty)	0x1F(1/32 Duty)
-
-//	SSD1327_Command(0xD3);  // Setting Display Offset
-//	SSD1327_Command(0x00);  // 00H Reset
-
-//	SSD1327_Command(0xD5);  // SET DISPLAY CLOCK
-//	SSD1327_Command(0x80);  // 105HZ
-
-//	SSD1327_Command(0xD9);	// Set Pre-Charge period
-//	SSD1327_Command(0x22);
-
-//	SSD1327_Command(0xDA);  // Set COM Hardware Configuration
-//	SSD1327_Command(0x12);  // Alternative COM Pin---See IC Spec page 34
-//							// (0x02)=> A4=0;Sequential COM pin configuration;A5=0;Disable COM Left/Right remap
-
-//	SSD1327_Command(0xDB);	// Set Deselect Vcomh level
-//	SSD1327_Command(0x40);
-
-//	SSD1327_Command(0x8D);  // Set Charge Pump
-//	//SSD1327_Command(0x10);  // Disable Charge Pump
-//	SSD1327_Command(0x14);  // Endable Charge Pump
 
 	SSD1327_Command(SSD1327_DISPLAYALLON_RESUME);  // Entire Display ON
 
@@ -231,10 +241,10 @@ void SSD1327_Clear(uint8_t Color)
 	switch (Color)
 	{
 		case WHITE:
-			memset(buffer, 0xFF, (SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8));
+			memset(buffer, 0xFF, SSD1327_BUFFERSIZE);
 			break;
 		case BLACK:
-			memset(buffer, 0x00, (SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8));
+			memset(buffer, 0x00, SSD1327_BUFFERSIZE);
 			break;
 	}
 }
@@ -244,17 +254,22 @@ void SSD1327_Clear(uint8_t Color)
 //
 void SSD1327_Display(void)
 {
-	SSD1327_Command(0x22);
+	SSD1327_Command(SSD1327_SETCOLUMNADDRESS);
 	SSD1327_Command(0x00);
-	SSD1327_Command(0x07);
+	SSD1327_Command(0x3F);
+
+	SSD1327_Command(SSD1327_SETROWADDRESS);
+	SSD1327_Command(0x00);
+	SSD1327_Command(0x5F);
+
 #ifdef SSD1327_I2C_CONTROL
 #ifdef SSD1327_I2C_DMA_ENABLE
 	if(ssd1337_i2c->hdmatx->State == HAL_DMA_STATE_READY)
 	{
-		HAL_I2C_Mem_Write_DMA(ssd1337_i2c, SSD1327_I2C_ADDRESS, 0x40, 1, (uint8_t*)&buffer, (SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8));
+		HAL_I2C_Mem_Write_DMA(ssd1337_i2c, SSD1327_I2C_ADDRESS, 0x40, 1, (uint8_t*)&buffer, SSD1327_BUFFERSIZE);
 	}
 #else
-	HAL_I2C_Mem_Write(ssd1337_i2c, SSD1327_I2C_ADDRESS, 0x40, 1, (uint8_t*)&buffer, (SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8), 100);
+	HAL_I2C_Mem_Write(ssd1337_i2c, SSD1327_I2C_ADDRESS, 0x40, 1, (uint8_t*)&buffer, SSD1327_BUFFERSIZE, 1000);
 #endif
 #endif
 #ifdef SSD1327_SPI_CONTROL
@@ -265,14 +280,14 @@ void SSD1327_Display(void)
 #endif
 	if(ssd1337_spi->hdmatx->State == HAL_DMA_STATE_READY)
 	{
-		HAL_SPI_Transmit_DMA(ssd1337_spi, (uint8_t*)&buffer, (SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8));
+		HAL_SPI_Transmit_DMA(ssd1337_spi, (uint8_t*)&buffer, SSD1327_BUFFERSIZE);
 	}
 #else
 	HAL_GPIO_WritePin(SSD1327_DC_GPIO_Port, SSD1327_DC_Pin, GPIO_PIN_SET);
 #ifndef SPI_CS_HARDWARE_CONTROL
 	HAL_GPIO_WritePin(SSD1327_CS_GPIO_Port, SSD1327_CS_Pin, GPIO_PIN_RESET);
 #endif
-	HAL_SPI_Transmit(ssd1337_spi, (uint8_t*)&buffer, (SSD1327_LCDHEIGHT * SSD1327_LCDWIDTH / 8), 100);
+	HAL_SPI_Transmit(ssd1337_spi, (uint8_t*)&buffer, SSD1327_BUFFERSIZE, 100);
 #ifndef SPI_CS_HARDWARE_CONTROL
 	HAL_GPIO_WritePin(SSD1327_CS_GPIO_Port, SSD1327_CS_Pin, GPIO_PIN_SET);
 #endif

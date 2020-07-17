@@ -22,7 +22,7 @@
 #define SSD1327_I2C_CONTROL
 
 #ifdef SSD1327_I2C_CONTROL
-#define SSD1327_I2C_DMA_ENABLE
+//#define SSD1327_I2C_DMA_ENABLE
 #define SSD1327_I2C_ADDRESS   0x78
 #endif
 #ifdef SSD1327_SPI_CONTROL
@@ -44,7 +44,7 @@
  * 		1 - will be compiled
  * 		0 - won't be compiled
  */
-#define GRAPHIC_ACCELERATION_COMMANDS 1
+#define GRAPHIC_ACCELERATION_COMMANDS 0
 
 /****************************************************************/
 
