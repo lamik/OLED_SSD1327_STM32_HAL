@@ -93,6 +93,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   SSD1327_I2cInit(&hi2c1);
   SSD1327_Clear(BLACK);
+
+  SSD1327_DrawPixel(0,0, WHITE);
+  SSD1327_DrawPixel(1,1, WHITE);
+  SSD1327_DrawPixel(2,2, WHITE);
+  SSD1327_DrawPixel(3,3, WHITE);
+  SSD1327_DrawPixel(4,4, WHITE);
+
   SSD1327_Display();
   /* USER CODE END 2 */
 

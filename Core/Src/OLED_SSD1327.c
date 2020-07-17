@@ -225,12 +225,20 @@ void SSD1327_DrawPixel(int16_t x, int16_t y, uint8_t Color)
 	 if ((x < 0) || (x >= SSD1327_LCDWIDTH) || (y < 0) || (y >= SSD1327_LCDHEIGHT))
 		 return;
 
-	 switch(Color)
+	 uint8_t SelectedCell = buffer[x/2 + y*(SSD1327_LCDWIDTH/2)];
+
+	 if(x % 2)
 	 {
-//		 case WHITE:   buffer[x+ (y/8)*SSD1327_LCDWIDTH] |=  (1 << (y&7)); break;
-//		 case BLACK:   buffer[x+ (y/8)*SSD1327_LCDWIDTH] &= ~(1 << (y&7)); break;
-//		 case INVERSE: buffer[x+ (y/8)*SSD1327_LCDWIDTH] ^=  (1 << (y&7)); break;
+		 SelectedCell &= ~(0x0F);
+		 SelectedCell |= (0x0F & Color);
 	 }
+	 else
+	 {
+		 SelectedCell &= ~(0xF0);
+		 SelectedCell |= (0xF0 & (Color<<4));
+	 }
+
+	 buffer[x/2 + y*(SSD1327_LCDWIDTH/2)] = SelectedCell;
 }
 
 //
@@ -238,15 +246,9 @@ void SSD1327_DrawPixel(int16_t x, int16_t y, uint8_t Color)
 //
 void SSD1327_Clear(uint8_t Color)
 {
-	switch (Color)
-	{
-		case WHITE:
-			memset(buffer, 0xFF, SSD1327_BUFFERSIZE);
-			break;
-		case BLACK:
-			memset(buffer, 0x00, SSD1327_BUFFERSIZE);
-			break;
-	}
+	if(Color > WHITE) Color = WHITE;
+
+	memset(buffer, (Color << 4 | Color), SSD1327_BUFFERSIZE);
 }
 
 //
