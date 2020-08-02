@@ -94,11 +94,29 @@ int main(void)
   SSD1327_I2cInit(&hi2c1);
   SSD1327_Clear(BLACK);
 
-  SSD1327_DrawPixel(0,0, WHITE);
-  SSD1327_DrawPixel(1,1, WHITE);
-  SSD1327_DrawPixel(2,2, WHITE);
-  SSD1327_DrawPixel(3,3, WHITE);
-  SSD1327_DrawPixel(4,4, WHITE);
+  GFX_SetFont(font_8x5);
+
+  for(uint8_t i = 0; i < 16; i++)
+  {
+	  GFX_DrawRectangle(i, i, SSD1327_LCDWIDTH-(i*2), SSD1327_LCDHEIGHT-(i*2), i);
+  }
+
+  for(uint8_t i = 1; i < 16; i+=2)
+  {
+	 uint8_t buffer[32];
+
+  }
+
+	 sprintf(buffer, "OLED ze 16-stopniowa");
+	 GFX_DrawString(5, 10, buffer, 15, 0);
+
+	 sprintf(buffer, "skala szarosci");
+	 GFX_DrawString(23, 19, buffer, 15, 0);
+
+	for(uint8_t i = 15; i > 0; i--)
+	{
+		 GFX_DrawFillRectangle((7*i)+7, 40, 7, 60, i);
+	}
 
   SSD1327_Display();
   /* USER CODE END 2 */
