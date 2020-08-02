@@ -189,10 +189,6 @@ void SSD1327_Init(void)
 	SSD1327_StopScroll();
 #endif
 
-#if ADVANCED_GRAPHIC_COMMANDS == 1
-	SSD1327_StopFadeOutOrBlinking();
-#endif
-
 	SSD1327_DisplayON(1);
 }
 
