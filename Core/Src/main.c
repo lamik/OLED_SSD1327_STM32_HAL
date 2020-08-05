@@ -15,7 +15,15 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */
+  *
+  *  Created on: 16.07.2020
+  *      Author: Mateusz Salamon
+  *		 www.msalamon.pl
+  *
+  *      Website: https://msalamon.pl/oled-ze-skala-szarosci-na-ssd1327-cz-1/
+  *      GitHub:  https://github.com/lamik/OLED_SSD1327_STM32_HAL
+  *      Contact: mateusz@msalamon.pl
+*/
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
