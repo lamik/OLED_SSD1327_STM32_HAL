@@ -1,15 +1,15 @@
 /*
- * GFX_BW.h
+ * GFX_SSD1327.h
  *
  *  The MIT License.
- *  Created on: 25.05.2017
+ *  Created on: 5.08.2020
  *      Author: Mateusz Salamon
  *      www.msalamon.pl
  *      mateusz@msalamon.pl
  */
 
-#ifndef GFX_BW_H_
-#define GFX_BW_H_
+#ifndef GFX_SSD1327_H_
+#define GFX_SSD1327_H_
 
 /***************************************************************
  *
@@ -115,11 +115,11 @@ void GFX_DrawFillTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8_
 void GFX_Image_P(int x, int y, uint8_t *img, uint8_t w, uint8_t h, uint8_t color);
 #endif
 #if STM32_USING ==1
-void GFX_Image(int x, int y, const uint8_t *img, uint8_t w, uint8_t h, uint8_t color);
+void GFX_Image(int x, int y, const uint8_t *img, uint8_t w, uint8_t h);
 #if USING_IMAGE_ROTATE == 1
 void GFX_ImageRotate(int x, int y, const uint8_t *img, uint8_t w, uint8_t h, uint8_t color, uint16_t angle);
 #endif
 #endif
 #endif
 
-#endif /* GFX_BW_H_ */
+#endif /* GFX_SSD1327_H_ */

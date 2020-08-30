@@ -35,6 +35,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED_SSD1327.h"
+#include "GFX_SSD1327.h"
+#include "fonts/fonts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

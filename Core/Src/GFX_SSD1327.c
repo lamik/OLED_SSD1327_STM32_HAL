@@ -1,17 +1,16 @@
 /*
- * GFX_BW.h
+ * GFX_SSD1327.h
  *
  *  The MIT License.
- *  Created on: 25.05.2017
+ *  Created on: 5.08.2020
  *      Author: Mateusz Salamon
  *      www.msalamon.pl
  *      mateusz@msalamon.pl
  */
-
 #include "main.h"
+#include "GFX_SSD1327.h"
 
 #include "OLED_SSD1327.h"
-#include "../Inc/GFX_BW.h"
 
 #if USING_LINES == 1
 #include <stdlib.h> // for abs() function
@@ -427,16 +426,27 @@ void GFX_Image_P(int x, int y, uint8_t *img, uint8_t w, uint8_t h, uint8_t color
 }
 #endif
 #if STM32_USING ==1
-void GFX_Image(int x, int y, const uint8_t *img, uint8_t w, uint8_t h, uint8_t color)
+void GFX_Image(int x, int y, const uint8_t *img, uint8_t w, uint8_t h)
 {
-	uint8_t i, j, byteWidth = (w+7)/8;
+	uint8_t i, j;
+	uint8_t SelectedCell;
 
 	for(j = 0; j < h; j++)
 	{
 		for(i = 0; i < w; i++)
 		{
-			if(img[j *byteWidth + i /8] & (128 >> (i&7)) )
-				GFX_DrawPixel(x+i, y+j, color);
+			SelectedCell = img[i/2 + j*(w/2)];
+
+			 if(i % 2)
+			 {
+				 SelectedCell &= 0x0F;
+			 }
+			 else
+			 {
+				 SelectedCell >>= 4;
+			 }
+
+			GFX_DrawPixel(x+i, y+j, SelectedCell);
 		}
 	}
 }
